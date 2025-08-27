@@ -48,7 +48,7 @@ class Excel extends CI_Controller {
         $insertData = [];
 
         foreach ($sheetData as $key => $row) {
-            if ($key == 0) continue; // Skip header
+            if ($key == 0) continue; // Skip header row
 
             $insertData[] = [
                 'q_no'                 => $row[0],
@@ -59,15 +59,21 @@ class Excel extends CI_Controller {
                 'English_Reason'       => $row[5],
                 'English_match_left'   => $row[6],
                 'English_match_right'  => $row[7],
-                'English_options'      => $row[8],
-                'Tamil_Question'       => $row[9],
-                'Tamil_statement_1'    => $row[10],
-                'Tamil_statement_2'    => $row[11],
-                'Tamil_Assertion'      => $row[12],
-                'Tamil_Reason'         => $row[13],
-                'Tamil_match_left'     => $row[14],
-                'Tamil_match_right'    => $row[15],
-                'Tamil_options'        => $row[16],
+                'Tamil_Question'       => $row[8],
+                'Tamil_statement_1'    => $row[9],
+                'Tamil_statement_2'    => $row[10],
+                'Tamil_Assertion'      => $row[11],
+                'Tamil_Reason'         => $row[12],
+                'Tamil_match_left'     => $row[13],
+                'Tamil_match_right'    => $row[14],
+                'T_option_1'           => $row[15],
+                'T_option_2'           => $row[16],
+                'T_option_3'           => $row[17],
+                'T_option_4'           => $row[18],
+                'E_option_1'           => $row[19],
+                'E_option_2'           => $row[20],
+                'E_option_3'           => $row[21],
+                'E_option_4'           => $row[22],
             ];
         }
 
