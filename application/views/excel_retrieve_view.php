@@ -23,31 +23,39 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        .question-box h4 {
+        /* ✅ Question titles only bold */
+        .question-title {
+            font-weight: bold;
             margin-bottom: 10px;
             color: #222;
         }
 
         .question-box p {
             margin: 5px 0;
+            font-weight: normal; /* ✅ everything else normal */
         }
 
+        /* Match the Following Styling */
         .match-table {
             width: 100%;
             border-collapse: collapse;
             margin: 15px 0;
+            table-layout: fixed;
         }
 
         .match-table th, .match-table td {
             border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
+            padding: 12px;
+            vertical-align: top;
+            word-wrap: break-word;
         }
 
         .match-table th {
             background-color: #f2f2f2;
+            text-align: center;
         }
 
+        /* Options styling */
         .options {
             display: flex;
             flex-wrap: wrap;
@@ -109,19 +117,37 @@
 <?php $q_no = 1; foreach($data as $row): ?>
 <div class="question-box">
 
-    <!-- English Question -->
-    <h4><?= $q_no ?>. <?= $row->English_Question ?></h4>
-    <?php if(!empty($row->English_statement_1)) echo "<p>".$row->English_statement_1."</p>"; ?>
-    <?php if(!empty($row->English_statements_2)) echo "<p>".$row->English_statements_2."</p>"; ?>
-    <?php if(!empty($row->English_Assertion)) echo "<p><em>Assertion: ".$row->English_Assertion."</em></p>"; ?>
-    <?php if(!empty($row->English_Reason)) echo "<p><em>Reason: ".$row->English_Reason."</em></p>"; ?>
+    <!-- English Question (BOLD + Question Number) -->
+    <?php if(!empty($row->English_Question)): ?>
+        <p class="question-title"><strong><?= $q_no ?>. <?= $row->English_Question ?></strong></p>
+    <?php endif; ?>
 
-    <!-- Tamil Question -->
-    <?php if(!empty($row->Tamil_Question)) echo "<p><em>".$row->Tamil_Question."</em></p>"; ?>
-    <?php if(!empty($row->Tamil_statement_1)) echo "<p>".$row->Tamil_statement_1."</p>"; ?>
-    <?php if(!empty($row->Tamil_statement_2)) echo "<p>".$row->Tamil_statement_2."</p>"; ?>
-    <?php if(!empty($row->Tamil_Assertion)) echo "<p><em>Assertion: ".$row->Tamil_Assertion."</em></p>"; ?>
-    <?php if(!empty($row->Tamil_Reason)) echo "<p><em>Reason: ".$row->Tamil_Reason."</em></p>"; ?>
+    <!-- Dynamic English Statements -->
+    <?php 
+        foreach($row as $col => $val){
+            if(stripos($col, "English_statement") !== false && $val !== null && trim($val) !== ''){
+                echo "<p>".trim($val)."</p>";
+            }
+        }
+    ?>
+
+    <?php if(!empty($row->English_Assertion)) echo "<p>Assertion: ".$row->English_Assertion."</p>"; ?>
+    <?php if(!empty($row->English_Reason)) echo "<p>Reason: ".$row->English_Reason."</p>"; ?>
+
+    <!-- Tamil Question (BOLD + Question Number continues) -->
+    <?php if(!empty($row->Tamil_Question)) echo "<p class='question-title'><strong>".$q_no.". ".$row->Tamil_Question."</strong></p>"; ?>
+
+    <!-- Dynamic Tamil Statements -->
+    <?php 
+        foreach($row as $col => $val){
+            if(stripos($col, "Tamil_statement") !== false && $val !== null && trim($val) !== ''){
+                echo "<p>".trim($val)."</p>";
+            }
+        }
+    ?>
+
+    <?php if(!empty($row->Tamil_Assertion)) echo "<p>Assertion: ".$row->Tamil_Assertion."</p>"; ?>
+    <?php if(!empty($row->Tamil_Reason)) echo "<p>Reason: ".$row->Tamil_Reason."</p>"; ?>
 
     <!-- Match the Following -->
     <?php if(!empty($row->English_match_left) && !empty($row->English_match_right)): ?>
@@ -141,14 +167,30 @@
         for($i=0; $i<$max_count; $i++):
         ?>
         <tr>
-            <td><?= isset($list1_eng[$i]) ? trim($list1_eng[$i]) : '' ?><?php if(isset($list1_tam[$i])) echo " / ".trim($list1_tam[$i]); ?></td>
-            <td><?= isset($list2_eng[$i]) ? trim($list2_eng[$i]) : '' ?><?php if(isset($list2_tam[$i])) echo " / ".trim($list2_tam[$i]); ?></td>
+            <td>
+                <strong><?= chr(65+$i) ?>.</strong>
+                <div>
+                    <?= isset($list1_eng[$i]) ? trim((string)$list1_eng[$i]) : '' ?>
+                    <?php if(isset($list1_tam[$i]) && trim((string)$list1_tam[$i])!=""): ?>
+                        <br><em><?= trim($list1_tam[$i]) ?></em>
+                    <?php endif; ?>
+                </div>
+            </td>
+            <td>
+                <strong><?= $i+1 ?>.</strong>
+                <div>
+                    <?= isset($list2_eng[$i]) ? trim((string)$list2_eng[$i]) : '' ?>
+                    <?php if(isset($list2_tam[$i]) && trim((string)$list2_tam[$i])!=""): ?>
+                        <br><em><?= trim($list2_tam[$i]) ?></em>
+                    <?php endif; ?>
+                </div>
+            </td>
         </tr>
         <?php endfor; ?>
     </table>
     <?php endif; ?>
 
-    <!-- Options (separate columns now) -->
+    <!-- Options -->
     <?php if(!empty($row->E_option_1) || !empty($row->E_option_2) || !empty($row->E_option_3) || !empty($row->E_option_4)): ?>
     <div class="options">
         <?php 
@@ -166,12 +208,12 @@
         ];
 
         foreach($eng_options as $index => $opt):
-            $opt_trim = trim($opt);
+            $opt_trim = trim((string)$opt);
             if($opt_trim == "") continue;
         ?>
         <label>
             <input type="radio" name="answer[<?= $row->q_no ?>]" value="<?= $opt_trim ?>">
-            <span><?= $opt_trim ?><?php if(!empty($tam_options[$index])) echo " / ".trim($tam_options[$index]); ?></span>
+            <span><?= $opt_trim ?><?php if(!empty($tam_options[$index])) echo " / ".trim((string)$tam_options[$index]); ?></span>
         </label>
         <?php endforeach; ?>
     </div>
