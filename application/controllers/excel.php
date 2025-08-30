@@ -80,6 +80,8 @@ class Excel extends CI_Controller {
                 'E_option_2'           => $row[26],
                 'E_option_3'           => $row[27],
                 'E_option_4'           => $row[28],
+                'English_answer'       => $row[29],
+                'Tamil_answer'       => $row[30],
             ];
         }
 

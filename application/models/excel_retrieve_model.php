@@ -9,7 +9,7 @@ class excel_retrieve_model extends CI_Model {
 
     // Get all questions
     public function display_records() {
-        $query = $this->db->get('mcq_questions');
+        $query = $this->db->get('mcq_questions_answers');
         return $query->result();
     }
 

@@ -1,9 +1,10 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Auth extends CI_Controller {
-
-    public function __construct() {
+class Auth extends CI_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         // Load helpers, libraries
         $this->load->library('session');
@@ -11,33 +12,36 @@ class Auth extends CI_Controller {
         $this->load->helper(array('form', 'url'));
     }
 
-    // Form to get username & email
-    public function index() {
-        $this->load->view('auth_form'); // simple form (username, email, submit)
+    // Show login form
+    public function index()
+    {
+        $this->load->view('auth_form'); // username + email input form
     }
 
     // Send OTP
-    public function send_otp() {
+    public function send_otp()
+    {
         $username = $this->input->post('username');
         $email    = $this->input->post('email');
 
         // ✅ Generate OTP
         $otp = rand(100000, 999999);
 
-        // ✅ Store OTP in session
+        // ✅ Store OTP + user info in session
         $this->session->set_userdata('otp', $otp);
         $this->session->set_userdata('email', $email);
+        $this->session->set_userdata('username', $username);
 
         // ✅ Email Config
         $config = array(
-            'protocol'  => 'smtp',
+            'protocol' => 'smtp',
             'smtp_host' => 'smtp.gmail.com',
             'smtp_port' => 587,
             'smtp_user' => 'kalai2003testing@gmail.com',   // your email
             'smtp_pass' => 'wmpuudckyedcgesf',             // ⚠️ app password
-            'mailtype'  => 'html',
-            'charset'   => 'utf-8',
-            'newline'   => "\r\n",
+            'mailtype' => 'html',
+            'charset' => 'utf-8',
+            'newline' => "\r\n",
             'smtp_crypto' => 'tls'
         );
 
@@ -62,20 +66,28 @@ class Auth extends CI_Controller {
     }
 
     // Verify OTP page
-    public function verify() {
-        $this->load->view('verify_otp'); // form to input OTP
+    public function verify()
+    {
+        $this->load->view('verify_otp');
     }
 
     // Check OTP
-    public function check_otp() {
+    public function check_otp()
+    {
         $input_otp   = $this->input->post('otp');
         $session_otp = $this->session->userdata('otp');
+        $username    = $this->session->userdata('username');
+        $email       = $this->session->userdata('email');
 
         if ($input_otp == $session_otp) {
-            // ✅ OTP correct → redirect to dashboard
-            redirect('excel_retrieve/display');
+            // ✅ OTP correct → set login session
+            $this->session->set_userdata('logged_in', true);
+            $this->session->set_userdata('username', $username);
+            $this->session->set_userdata('email', $email);
+
+            redirect('tnpsc/dashboard');
         } else {
-            // ❌ Invalid OTP → reload verify page with error
+            // ❌ Invalid OTP
             $this->session->set_flashdata('error', '❌ Invalid OTP! Please try again.');
             redirect('auth/verify');
         }

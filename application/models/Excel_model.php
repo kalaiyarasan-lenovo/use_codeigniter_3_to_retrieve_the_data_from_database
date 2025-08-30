@@ -9,7 +9,7 @@ class Excel_model extends CI_Model {
 
     // Insert multiple rows into mcq_questions
     public function insert_batch($data) {
-        return $this->db->insert_batch('mcq_questions', $data);
+        return $this->db->insert_batch('mcq_questions_answers', $data);
     }
 
     // Fetch all rows (optional, for display)
