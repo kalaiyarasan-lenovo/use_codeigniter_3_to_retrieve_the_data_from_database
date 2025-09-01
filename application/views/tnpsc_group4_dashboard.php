@@ -98,9 +98,10 @@
     <div class="sidebar">
         <h2>TNPSC Group 4</h2>
         <h3>General studies</h3>
-        <a href="<?= site_url('excel_retrieve/display'); ?>"><i class="fa-solid fa-book"></i> Online Test 1</a>
+        <a href="<?= site_url('excel_retrieve/display'); ?>"><i class="fa-solid fa-book"></i> Mock_Test 1</a>
         <h3>Maths</h3>
-        <a href="<?= site_url('apti'); ?>"><i class="fa-solid fa-book"></i>Apti_Reas_Set 1</a>
+        <a href="<?= site_url('apti'); ?>"><i class="fa-solid fa-book"></i>Mock_Test_1</a>
+        <a href="<?= site_url('apti2'); ?>"><i class="fa-solid fa-book"></i>Mock_Test_2</a>
         <a href="<?= site_url('auth/index'); ?>"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
     </div>
 

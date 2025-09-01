@@ -84,7 +84,7 @@
         }
 
         .options input[type="radio"]:checked+span {
-            background: #4CAF50;
+            background: #131414ff;
             color: white;
             display: block;
             border-radius: 8px;
@@ -118,11 +118,11 @@
 
         .view-btn {
             margin-top: 15px;
-            background: #2196F3;
+            background: #ddd208ff;
         }
 
         .view-btn:hover {
-            background: #1976D2;
+            background: #d2bd19ff;
         }
 
         /* ✅ Correct/Wrong Highlight */
@@ -272,7 +272,7 @@
                 <?php endif; ?>
 
                 <!-- ✅ Answer View Button + Answer Box -->
-                <button type="button" class="view-btn" onclick="toggleAnswer('ans<?= $q_no ?>','opts<?= $q_no ?>')">View Answer</button>
+                <button type="button" class="view-btn" onclick="toggleAnswer('ans<?= $q_no ?>','opts<?= $q_no ?>')">View Correct Answer</button>
                 <div id="ans<?= $q_no ?>" class="answer-box">
                     <strong>Answer:</strong><?= $row->English_answer ?>/<?= $row->Tamil_answer ?>
                 </div>
