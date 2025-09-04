@@ -75,9 +75,8 @@
         }
 
         .options label:hover {
-            background: #060606;
-            border-color: #030303;
-            color: white;
+            background: #e0f7e0;
+            border-color: #4CAF50;
         }
 
         .options input[type="radio"] {
@@ -85,10 +84,10 @@
         }
 
         .options input[type="radio"]:checked+span {
-            background: #0d40f8;
+            background: #4CAF50;
             color: white;
             display: block;
-            border-radius: 0px;
+            border-radius: 8px;
         }
 
         button {
@@ -119,11 +118,11 @@
 
         .view-btn {
             margin-top: 15px;
-            background: #ddd208ff;
+            background: #2196F3;
         }
 
         .view-btn:hover {
-            background: #d2bd19ff;
+            background: #1976D2;
         }
 
         /* ✅ Correct/Wrong Highlight */
@@ -150,46 +149,6 @@
             font-weight: bold;
             color: #dc3545;
         }
-
-        /* ✅ Result Summary */
-        #result-summary {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        #result-summary h3 {
-            color: #333;
-        }
-
-        #result-summary p {
-            margin: 5px 0;
-            font-size: 16px;
-        }
-
-        /* ✅ Pagination Controls */
-        #pagination {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        #pagination button {
-            margin: 5px;
-            background: #007BFF;
-        }
-
-        #pagination button:hover {
-            background: #0056b3;
-        }
-
-        #page-info {
-            font-weight: bold;
-            margin: 0 10px;
-        }
     </style>
 </head>
 
@@ -206,6 +165,79 @@
                 <!-- English Question -->
                 <?php if (!empty($row->English_Question)): ?>
                     <p class="question-title"><strong><?= $q_no ?>. <?= $row->English_Question ?></strong></p>
+                <?php endif; ?>
+
+                <!-- English Statements -->
+                <?php
+                foreach ($row as $col => $val) {
+                    if (stripos($col, "English_statement") !== false && $val !== null && trim($val) !== '') {
+                        echo "<p>" . trim($val) . "</p>";
+                    }
+                }
+                ?>
+
+                <?php if (!empty($row->English_Assertion))
+                    echo "<p>Assertion: " . $row->English_Assertion . "</p>"; ?>
+                <?php if (!empty($row->English_Reason))
+                    echo "<p>Reason: " . $row->English_Reason . "</p>"; ?>
+
+                <!-- Tamil Question -->
+                <?php if (!empty($row->Tamil_Question))
+                    echo "<p class='question-title'><strong>" . $q_no . ". " . $row->Tamil_Question . "</strong></p>"; ?>
+
+                <!-- Tamil Statements -->
+                <?php
+                foreach ($row as $col => $val) {
+                    if (stripos($col, "Tamil_statement") !== false && $val !== null && trim($val) !== '') {
+                        echo "<p>" . trim($val) . "</p>";
+                    }
+                }
+                ?>
+
+                <?php if (!empty($row->Tamil_Assertion))
+                    echo "<p>Assertion: " . $row->Tamil_Assertion . "</p>"; ?>
+                <?php if (!empty($row->Tamil_Reason))
+                    echo "<p>Reason: " . $row->Tamil_Reason . "</p>"; ?>
+
+                <!-- Match the Following -->
+                <?php if (!empty($row->English_match_left) && !empty($row->English_match_right)): ?>
+                    <h4>Match the Following:</h4>
+                    <table class="match-table">
+                        <tr>
+                            <th>List - I</th>
+                            <th>List - II</th>
+                        </tr>
+                        <?php
+                        $list1_eng = explode("\n", $row->English_match_left);
+                        $list2_eng = explode("\n", $row->English_match_right);
+                        $list1_tam = explode("\n", $row->Tamil_match_left);
+                        $list2_tam = explode("\n", $row->Tamil_match_right);
+
+                        $max_count = max(count($list1_eng), count($list2_eng));
+                        for ($i = 0; $i < $max_count; $i++):
+                            ?>
+                            <tr>
+                                <td>
+                                    <strong><?= chr(65 + $i) ?>.</strong>
+                                    <div>
+                                        <?= isset($list1_eng[$i]) ? trim((string) $list1_eng[$i]) : '' ?>
+                                        <?php if (isset($list1_tam[$i]) && trim((string) $list1_tam[$i]) != ""): ?>
+                                            <br><em><?= trim($list1_tam[$i]) ?></em>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong><?= $i + 1 ?>.</strong>
+                                    <div>
+                                        <?= isset($list2_eng[$i]) ? trim((string) $list2_eng[$i]) : '' ?>
+                                        <?php if (isset($list2_tam[$i]) && trim((string) $list2_tam[$i]) != ""): ?>
+                                            <br><em><?= trim($list2_tam[$i]) ?></em>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endfor; ?>
+                    </table>
                 <?php endif; ?>
 
                 <!-- Options -->
@@ -230,8 +262,7 @@
                             if ($opt_trim == "")
                                 continue;
                             ?>
-                            <label
-                                data-correct="<?= ($row->English_answer == $opt_trim || $row->Tamil_answer == trim((string) $tam_options[$index])) ? '1' : '0' ?>">
+                            <label data-correct="<?= ($row->English_answer == $opt_trim || $row->Tamil_answer == trim((string)$tam_options[$index])) ? '1' : '0' ?>">
                                 <input type="radio" name="answer[<?= $row->q_no ?>]" value="<?= $opt_trim ?>">
                                 <span><?= $opt_trim ?><?php if (!empty($tam_options[$index]))
                                       echo " / " . trim((string) $tam_options[$index]); ?></span>
@@ -241,131 +272,36 @@
                 <?php endif; ?>
 
                 <!-- ✅ Answer View Button + Answer Box -->
-                <button type="button" class="view-btn" onclick="toggleAnswer('ans<?= $q_no ?>','opts<?= $q_no ?>')">
-                    View Correct Answer
-                </button>
+                <button type="button" class="view-btn" onclick="toggleAnswer('ans<?= $q_no ?>','opts<?= $q_no ?>')">View Answer</button>
                 <div id="ans<?= $q_no ?>" class="answer-box">
-                    <strong>Answer:</strong> <?= $row->English_answer ?>/<?= $row->Tamil_answer ?>
+                    <strong>Answer:</strong><?= $row->English_answer ?>/<?= $row->Tamil_answer ?>
                 </div>
 
             </div>
             <?php $q_no++; endforeach; ?>
 
-        <!-- ✅ Pagination Controls -->
-        <div id="pagination">
-            <button type="button" id="prevBtn" onclick="prevPage()">Previous</button>
-            <span id="page-info"></span>
-            <button type="button" id="nextBtn" onclick="nextPage()">Next</button>
-        </div>
-
         <button type="submit">Submit</button>
-        <button type="button" onclick="window.history.back()">Back</button>
     </form>
 
-    <!-- ✅ Result Summary -->
-    <div id="result-summary">
-        <h3 id="answered"></h3>
-        <p style="color:green;">Correct Answer(s): <span id="correct"></span></p>
-        <p style="color:red;">Wrong Answer(s): <span id="wrong"></span></p>
-        <p>Total questions Attempted: <span id="attempted"></span></p>
-        <p style="color:blue;">View Answer(s) Clicked: <span id="viewed"></span></p>
-    </div>
+    <script>
+        function toggleAnswer(ansId, optId) {
+            var box = document.getElementById(ansId);
+            box.style.display = (box.style.display === "block") ? "none" : "block";
 
-<script>
-let viewAnswerCount = 0; // ✅ counter for view answer clicks
-let currentPage = 1;
-const questionsPerPage = 10;   // ✅ Show 10 questions per page
-const questions = document.querySelectorAll(".question-box");
-const totalPages = Math.ceil(questions.length / questionsPerPage);
-
-// ✅ Show/Hide Answers
-function toggleAnswer(ansId, optId) {
-    var box = document.getElementById(ansId);
-    let wasHidden = (box.style.display !== "block");
-
-    box.style.display = (box.style.display === "block") ? "none" : "block";
-
-    if (wasHidden) {
-        viewAnswerCount++;
-        box.closest(".question-box").setAttribute("data-viewed", "1");
-    }
-
-    if (box.style.display === "block") {
-        let options = document.querySelectorAll("#" + optId + " label");
-        options.forEach(opt => {
-            opt.classList.remove("correct", "wrong");
-            if (opt.getAttribute("data-correct") === "1") {
-                opt.classList.add("correct");
-            } else if (opt.querySelector("input").checked) {
-                opt.classList.add("wrong");
-            }
-        });
-    }
-}
-
-// ✅ Pagination Logic
-function showPage(page) {
-    questions.forEach((q, i) => {
-        q.style.display = (i >= (page - 1) * questionsPerPage && i < page * questionsPerPage) ? "block" : "none";
-    });
-
-    document.getElementById("page-info").innerText = `Page ${page} of ${totalPages}`;
-    document.getElementById("prevBtn").style.display = (page === 1) ? "none" : "inline-block";
-    document.getElementById("nextBtn").style.display = (page === totalPages) ? "none" : "inline-block";
-}
-
-function nextPage() {
-    if (currentPage < totalPages) {
-        currentPage++;
-        showPage(currentPage);
-    }
-}
-
-function prevPage() {
-    if (currentPage > 1) {
-        currentPage--;
-        showPage(currentPage);
-    }
-}
-
-// ✅ Initialize first page
-showPage(currentPage);
-
-// ✅ Evaluate results when form is submitted
-document.querySelector("form").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    let totalQuestions = document.querySelectorAll(".question-box").length;
-    let correct = 0, wrong = 0, attempted = 0;
-
-    document.querySelectorAll(".question-box").forEach(qBox => {
-        let optGroup = qBox.querySelector(".options");
-        let selected = optGroup ? optGroup.querySelector("input[type='radio']:checked") : null;
-        let viewed = qBox.getAttribute("data-viewed") === "1";
-
-        if (selected) {
-            attempted++;
-            if (!viewed) {
-                let label = selected.closest("label");
-                if (label.getAttribute("data-correct") === "1") {
-                    correct++;
-                } else {
-                    wrong++;
-                }
+            if (box.style.display === "block") {
+                let options = document.querySelectorAll("#" + optId + " label");
+                options.forEach(opt => {
+                    opt.classList.remove("correct", "wrong");
+                    if (opt.getAttribute("data-correct") === "1") {
+                        opt.classList.add("correct"); // ✅ mark correct option
+                    } else if (opt.querySelector("input").checked) {
+                        opt.classList.add("wrong"); // ❌ mark wrong if chosen
+                    }
+                });
             }
         }
-    });
-
-    document.getElementById("result-summary").style.display = "block";
-    document.getElementById("answered").innerText = `You answered ${attempted}/${totalQuestions} questions`;
-    document.getElementById("correct").innerText = correct;
-    document.getElementById("wrong").innerText = wrong;
-    document.getElementById("attempted").innerText = attempted;
-    document.getElementById("viewed").innerText = viewAnswerCount;
-
-    document.getElementById("result-summary").scrollIntoView({behavior: "smooth"});
-});
-</script>
+    </script>
 
 </body>
+
 </html>

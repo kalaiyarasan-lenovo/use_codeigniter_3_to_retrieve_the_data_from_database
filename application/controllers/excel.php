@@ -51,19 +51,15 @@ class Excel extends CI_Controller {
             if ($key == 0) continue; // Skip header row
 
             $insertData[] = [
-                'q_no'            => $row[0],
-                'English_question' => $row[1],
-                'Tamil_question'   => $row[2],
-                'E_option_1'      => $row[3],
-                'E_option_2'      => $row[4],
-                'E_option_3'      => $row[5],
-                'E_option_4'      => $row[6],
-                'T_option_1'      => $row[7],
-                'T_option_2'      => $row[8],
-                'T_option_3'      => $row[9],
-                'T_option_4'      => $row[10],
-                'English_answer'  => $row[11],
-                'Tamil_answer'    => $row[12],
+                'Q_no'            => $row[0],
+                'Question'        => $row[1],
+                'Column_A'        => $row[2],
+                'Column_B'        => $row[3],
+                'Option_1'        => $row[4],
+                'Option_2'        => $row[5],
+                'Option_3'        => $row[6],
+                'Option_4'        => $row[7],
+                'Correct_Answer'  => $row[8],
             ];
         }
 

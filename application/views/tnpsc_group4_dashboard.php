@@ -97,6 +97,8 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <h2>TNPSC Group 4</h2>
+        <h3>General English</h3>
+        <a href="<?= site_url('Gen_Eng_Set_1'); ?>"><i class="fa-solid fa-book"></i> Mock_Test 1</a>
         <h3>General studies</h3>
         <a href="<?= site_url('excel_retrieve/display'); ?>"><i class="fa-solid fa-book"></i> Mock_Test 1</a>
         <h3>Maths</h3>
