@@ -96,11 +96,11 @@
                             <div class="form-text">* Your Phone Number.</div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100">Send OTP</button>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
                     </form>
 
                     <div class="text-center mt-3">
-                        <p class="mb-0">Are you a new user? <a href="<?php echo site_url('user_sign/signup'); ?>">Sign
+                        <p class="mb-0">Are you a new user? <a href="<?php echo site_url('user_sign1/signup'); ?>">Sign
                                 up here</a></p>
                         <small class="text-muted">* Just sign up once – then use your email or username to log in
                             anytime.</small>
