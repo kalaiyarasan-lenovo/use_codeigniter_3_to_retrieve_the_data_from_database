@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send OTP</title>
+    <title>Login</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -62,7 +62,7 @@
             <div class="col-md-6 col-lg-5">
                 <div class="card p-4">
 
-                    <h3 class="text-center mb-4 title">🔐 Send OTP</h3>
+                    <h3 class="text-center mb-4 title">Login Page</h3>
 
                     <?php if ($this->session->flashdata('error')): ?>
                         <div class="alert alert-danger">
