@@ -91,23 +91,37 @@
         }
 
         button {
-            background: #4CAF50;
-            color: white;
             border: none;
             padding: 12px 25px;
             border-radius: 8px;
             font-size: 15px;
             cursor: pointer;
             transition: 0.3s;
+            color: white;
         }
 
-        button:hover {
-            background: #45a049;
+        /* ✅ Green buttons (Submit + Back) */
+        .green-btn {
+            background: #28a745;
+        }
+
+        .green-btn:hover {
+            background: #218838;
+        }
+
+        /* ✅ Blue buttons (Prev + Next) */
+        .blue-btn {
+            background: #007bff;
+        }
+
+        .blue-btn:hover {
+            background: #0056b3;
         }
 
         .view-btn {
             margin-top: 15px;
             background: #ddd208ff;
+            color: black;
         }
 
         .view-btn:hover {
@@ -161,18 +175,26 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
+        /* ✅ Pagination Layout */
         #pagination {
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin: 20px 0;
+        }
+
+        #pagination .left-buttons {
+            flex: 1;
+            text-align: left;
+        }
+
+        #pagination .right-buttons {
+            flex: 1;
+            text-align: right;
         }
 
         #pagination button {
             margin: 5px;
-            background: #007bff;
-        }
-
-        #pagination button:hover {
-            background: #0056b3;
         }
     </style>
 </head>
@@ -291,13 +313,16 @@
                 <?php $q_no++; endforeach; ?>
         </div>
 
-        <!-- Pagination -->
+        <!-- ✅ Pagination -->
         <div id="pagination">
-            <button type="button" id="prevBtn">Previous</button>
-            <button type="button" id="nextBtn">Next</button>
-            <button type="submit" id="submitBtn">Submit</button>
-            <button type="button" onclick="window.history.back()">Back</button>
-
+            <div class="left-buttons">
+                <button type="submit" id="submitBtn" class="green-btn">Submit</button>
+                <button type="button" onclick="window.history.back()" class="green-btn">Back</button>
+            </div>
+            <div class="right-buttons">
+                <button type="button" id="prevBtn" class="blue-btn">Previous</button>
+                <button type="button" id="nextBtn" class="blue-btn">Next</button>
+            </div>
         </div>
     </form>
 
@@ -361,9 +386,13 @@
                 let options = document.querySelectorAll("#" + optId + " label");
                 options.forEach(opt => {
                     opt.classList.remove("correct", "wrong");
-                    if (opt.getAttribute("data-correct") === "1") {
+                    let isCorrect = opt.getAttribute("data-correct") === "1";
+                    let isSelected = opt.querySelector("input").checked;
+
+                    if (isCorrect) {
                         opt.classList.add("correct");
-                    } else if (opt.querySelector("input").checked) {
+                    }
+                    if (isSelected && !isCorrect) {
                         opt.classList.add("wrong");
                     }
                 });
