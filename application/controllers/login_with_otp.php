@@ -20,13 +20,9 @@ class Login_with_otp extends CI_Controller
     // Send OTP
     public function send_otp()
     {
-        $username = $this->input->post('username');
-        $email    = $this->input->post('email');
-        $phone    = $this->input->post('phone');
+        $email = $this->input->post('email');
 
-        $this->db->where('username', $username);
         $this->db->where('email', $email);
-        $this->db->where('phone', $phone);
         $query = $this->db->get('users');
 
         if ($query->num_rows() == 1) {
@@ -38,9 +34,10 @@ class Login_with_otp extends CI_Controller
                 'otp'      => $otp,
                 'email'    => $user->email,
                 'username' => $user->username,
-                'phone'    => $user->phone
+                'otp_time' => time()
             ]);
 
+            // Email config
             $config = [
                 'protocol'    => 'smtp',
                 'smtp_host'   => 'smtp.gmail.com',
@@ -62,27 +59,23 @@ class Login_with_otp extends CI_Controller
                 <h2>Hello, {$user->username}</h2>
                 <p>Your One-Time Password (OTP) is:</p>
                 <h3 style='color:blue;'>{$otp}</h3>
-                <p>Please use this code to verify your email. It will expire in 5 minutes.</p>
+                <p>Please use this code to verify your login. It will expire in 5 minutes.</p>
             ";
 
             $this->email->message($message);
 
             if ($this->email->send()) {
-                redirect('login_with_otp/verify');
+                $this->session->set_flashdata('success', '✅ OTP sent successfully! Please check your email.');
+                $this->session->set_flashdata('otp_sent', true);
+                $this->session->set_flashdata('email_entered', $email);
+                redirect('login_with_otp');
             } else {
                 echo $this->email->print_debugger();
             }
-
         } else {
-            $this->session->set_flashdata('error', 'Invalid username, email, or phone.');
+            $this->session->set_flashdata('error', '❌ Email not found!');
             redirect('login_with_otp');
         }
-    }
-
-    // OTP verification page
-    public function verify()
-    {
-        $this->load->view('verify_otp');
     }
 
     // Validate OTP
@@ -92,6 +85,14 @@ class Login_with_otp extends CI_Controller
         $session_otp = $this->session->userdata('otp');
         $username    = $this->session->userdata('username');
         $email       = $this->session->userdata('email');
+        $otp_time    = $this->session->userdata('otp_time');
+
+        // Expiry check (5 mins)
+        if (time() - $otp_time > 300) {
+            $this->session->set_flashdata('error', '❌ OTP expired! Please request a new one.');
+            redirect('login_with_otp');
+            return;
+        }
 
         if ($input_otp == $session_otp) {
             $this->session->set_userdata([
@@ -99,11 +100,10 @@ class Login_with_otp extends CI_Controller
                 'username'  => $username,
                 'email'     => $email
             ]);
-
             redirect('tnpsc/dashboard');
         } else {
             $this->session->set_flashdata('error', '❌ Invalid OTP! Please try again.');
-            redirect('login_with_otp/verify');
+            redirect('login_with_otp');
         }
     }
 }

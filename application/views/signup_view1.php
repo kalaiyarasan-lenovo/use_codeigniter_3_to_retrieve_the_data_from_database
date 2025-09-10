@@ -46,7 +46,7 @@
                     <div class="alert alert-danger"><?= $this->session->flashdata('error'); ?></div>
                 <?php endif; ?>
 
-                <form method="post" action="<?php echo site_url('user_sign/register'); ?>">
+                <form method="post" action="<?php echo site_url('user_sign1/register'); ?>">
                     <div class="mb-3">
                         <label class="form-label">Username</label>
                         <input type="text" name="username" class="form-control" placeholder="Enter your name" required>
