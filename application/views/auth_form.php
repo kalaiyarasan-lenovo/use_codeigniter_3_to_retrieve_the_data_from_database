@@ -84,7 +84,7 @@
                 </form>
 
                 <div class="text-center mt-3">
-                    <p class="mb-0">New user? <a href="<?= site_url('user_sign1/signup'); ?>">Sign up here</a></p>
+                    <p class="mb-0">New user? <a href="<?= site_url('user_sign2/signup'); ?>">Sign up here</a></p>
                 </div>
 
             </div>

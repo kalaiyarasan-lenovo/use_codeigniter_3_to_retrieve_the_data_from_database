@@ -74,7 +74,7 @@ class Auth extends CI_Controller
             }
         } else {
             $this->session->set_flashdata('error', '❌ Email not found!');
-            redirect('auth_form');
+            redirect('auth');
         }
     }
 
@@ -90,7 +90,7 @@ class Auth extends CI_Controller
         // Expiry check (5 mins)
         if (time() - $otp_time > 300) {
             $this->session->set_flashdata('error', '❌ OTP expired! Please request a new one.');
-            redirect('auth_form');
+            redirect('auth');
             return;
         }
 
@@ -103,7 +103,7 @@ class Auth extends CI_Controller
             redirect('tnpsc/dashboard');
         } else {
             $this->session->set_flashdata('error', '❌ Invalid OTP! Please try again.');
-            redirect('auth_form');
+            redirect('auth');
         }
     }
 }

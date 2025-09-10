@@ -34,7 +34,7 @@ class Login_with_pass extends CI_Controller {
             // Save session
             $this->session->set_userdata('user_id', $user->id);
             $this->session->set_userdata('username', $user->username);
-            redirect('welcome');
+            redirect('tnpsc/dashboard');
         } else {
             // Custom error message for invalid login
             $data['login_error'] = "Invalid Gmail or Phone Number!";
