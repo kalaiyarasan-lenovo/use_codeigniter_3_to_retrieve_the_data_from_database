@@ -6,90 +6,104 @@ class Auth extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        // Load helpers, libraries
-        $this->load->library('session');
-        $this->load->library('email');
-        $this->load->helper(array('form', 'url'));
+        $this->load->library(['session', 'email']);
+        $this->load->helper(['form', 'url']);
+        $this->load->database();
     }
 
     // Show login form
     public function index()
     {
-        $this->load->view('auth_form'); // username + email input form
+        $this->load->view('auth_form');
     }
 
     // Send OTP
     public function send_otp()
     {
-        $username = $this->input->post('username');
-        $email    = $this->input->post('email');
+        $email = $this->input->post('email');
 
-        // ✅ Generate OTP
-        $otp = rand(100000, 999999);
+        $this->db->where('email', $email);
+        $query = $this->db->get('users');
 
-        // ✅ Store OTP + user info in session
-        $this->session->set_userdata('otp', $otp);
-        $this->session->set_userdata('email', $email);
-        $this->session->set_userdata('username', $username);
+        if ($query->num_rows() == 1) {
+            $user = $query->row();
 
-        // ✅ Email Config
-        $config = array(
-            'protocol' => 'smtp',
-            'smtp_host' => 'smtp.gmail.com',
-            'smtp_port' => 587,
-            'smtp_user' => 'kalai2003testing@gmail.com',   // your email
-            'smtp_pass' => 'wmpuudckyedcgesf',             // ⚠️ app password
-            'mailtype' => 'html',
-            'charset' => 'utf-8',
-            'newline' => "\r\n",
-            'smtp_crypto' => 'tls'
-        );
+            $otp = rand(100000, 999999);
 
-        $this->email->initialize($config);
-        $this->email->from('kalai2003testing@gmail.com', 'My App');
-        $this->email->to($email);
-        $this->email->subject('Your OTP Code');
+            $this->session->set_userdata([
+                'otp'      => $otp,
+                'email'    => $user->email,
+                'username' => $user->username,
+                'otp_time' => time()
+            ]);
 
-        $message = "
-            <h2>Hello, $username</h2>
-            <p>Your One-Time Password (OTP) is:</p>
-            <h3 style='color:blue;'>$otp</h3>
-            <p>Please use this code to verify your email. It will expire in 5 minutes.</p>
-        ";
-        $this->email->message($message);
+            // Email config
+            $config = [
+                'protocol'    => 'smtp',
+                'smtp_host'   => 'smtp.gmail.com',
+                'smtp_port'   => 587,
+                'smtp_user'   => 'kalai2003testing@gmail.com',
+                'smtp_pass'   => 'wmpuudckyedcgesf',
+                'mailtype'    => 'html',
+                'charset'     => 'utf-8',
+                'newline'     => "\r\n",
+                'smtp_crypto' => 'tls'
+            ];
 
-        if ($this->email->send()) {
-            redirect('auth/verify');
+            $this->email->initialize($config);
+            $this->email->from('kalai2003testing@gmail.com', 'My App');
+            $this->email->to($user->email);
+            $this->email->subject('Your OTP Code');
+
+            $message = "
+                <h2>Hello, {$user->username}</h2>
+                <p>Your One-Time Password (OTP) is:</p>
+                <h3 style='color:blue;'>{$otp}</h3>
+                <p>Please use this code to verify your login. It will expire in 5 minutes.</p>
+            ";
+
+            $this->email->message($message);
+
+            if ($this->email->send()) {
+                $this->session->set_flashdata('success', '✅ OTP sent successfully! Please check your email.');
+                $this->session->set_flashdata('otp_sent', true);
+                $this->session->set_flashdata('email_entered', $email);
+                redirect('auth');
+            } else {
+                echo $this->email->print_debugger();
+            }
         } else {
-            echo $this->email->print_debugger();
+            $this->session->set_flashdata('error', '❌ Email not found!');
+            redirect('auth_form');
         }
     }
 
-    // Verify OTP page
-    public function verify()
-    {
-        $this->load->view('verify_otp');
-    }
-
-    // Check OTP
+    // Validate OTP
     public function check_otp()
     {
         $input_otp   = $this->input->post('otp');
         $session_otp = $this->session->userdata('otp');
         $username    = $this->session->userdata('username');
         $email       = $this->session->userdata('email');
+        $otp_time    = $this->session->userdata('otp_time');
+
+        // Expiry check (5 mins)
+        if (time() - $otp_time > 300) {
+            $this->session->set_flashdata('error', '❌ OTP expired! Please request a new one.');
+            redirect('auth_form');
+            return;
+        }
 
         if ($input_otp == $session_otp) {
-            // ✅ OTP correct → set login session
-            $this->session->set_userdata('logged_in', true);
-            $this->session->set_userdata('username', $username);
-            $this->session->set_userdata('email', $email);
-
+            $this->session->set_userdata([
+                'logged_in' => true,
+                'username'  => $username,
+                'email'     => $email
+            ]);
             redirect('tnpsc/dashboard');
         } else {
-            // ❌ Invalid OTP
             $this->session->set_flashdata('error', '❌ Invalid OTP! Please try again.');
-            redirect('auth/verify');
+            redirect('auth_form');
         }
     }
 }
