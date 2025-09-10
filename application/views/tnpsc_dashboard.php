@@ -98,7 +98,7 @@
         <h2>TNPSC Selection</h2>
         <a href="<?= site_url('tnpsc/group4'); ?>"><i class="fa-solid fa-book"></i> TNPSC Group 4</a>
         <a href="<?= site_url('tnpsc/group2'); ?>"><i class="fa-solid fa-book"></i> TNPSC Group 2</a>
-        <a href="<?= site_url('auth/logout'); ?>"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        <a href="<?= site_url('auth'); ?>"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
     </div>
 
     <!-- Main -->

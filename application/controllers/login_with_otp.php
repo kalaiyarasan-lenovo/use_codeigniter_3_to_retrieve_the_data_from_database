@@ -100,7 +100,7 @@ class Login_with_otp extends CI_Controller
                 'username'  => $username,
                 'email'     => $email
             ]);
-            redirect('tnpsc/dashboard');
+            redirect('qr_code');
         } else {
             $this->session->set_flashdata('error', '❌ Invalid OTP! Please try again.');
             redirect('login_with_otp');
